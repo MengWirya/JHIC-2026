@@ -1,0 +1,142 @@
+// Skema database Moklet Hub 2.0
+// Sesuai ERD yang sudah disepakati: Admin, Konten, Perusahaan, TagJurusan, Testimoni, FAQ, PesanMasuk
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ─── AUTH & ADMIN ─────────────────────────────────────────────
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  nama         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin") // admin | guru | panitia
+  createdAt    DateTime @default(now())
+
+  kontenList     Konten[]
+  perusahaanList Perusahaan[]
+}
+
+// ─── KONTEN GENERIK (Prestasi, Berita, Produk BLUD, Galeri) ────
+// Satu tabel untuk beberapa tipe konten, dibedakan lewat kolom `tipe`.
+// Ini yang membuat 1 form admin bisa dipakai ulang untuk beberapa fitur sekaligus.
+
+model Konten {
+  id          Int      @id @default(autoincrement())
+  tipe        TipeKonten
+  judul       String
+  deskripsi   String   @db.Text
+  gambarUrl   String?
+  tanggal     DateTime @default(now())
+  status      StatusKonten @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  admin    Admin @relation(fields: [adminId], references: [id])
+  adminId  Int
+
+  @@index([tipe, status])
+}
+
+enum TipeKonten {
+  PRESTASI
+  BERITA
+  BLUD
+  GALERI
+}
+
+enum StatusKonten {
+  DRAFT
+  PUBLISHED
+}
+
+// ─── CAREER INDUSTRIES (BKK) ────────────────────────────────────
+
+model Perusahaan {
+  id        Int     @id @default(autoincrement())
+  nama      String
+  logoUrl   String?
+  overview  String  @db.Text
+  kontak    String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  admin    Admin @relation(fields: [adminId], references: [id])
+  adminId  Int
+
+  tags       PerusahaanTag[]
+  testimoni  Testimoni[]
+}
+
+model TagJurusan {
+  id   Int    @id @default(autoincrement())
+  nama String @unique // contoh: "Fullstack Developer", "Cloud Computing", "Cyber Security"
+
+  perusahaan PerusahaanTag[]
+}
+
+// Tabel penghubung many-to-many Perusahaan <-> TagJurusan
+model PerusahaanTag {
+  perusahaan   Perusahaan @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
+  perusahaanId Int
+  tag          TagJurusan @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId        Int
+
+  @@id([perusahaanId, tagId])
+}
+
+model Testimoni {
+  id           Int    @id @default(autoincrement())
+  namaPemberi  String
+  peran        String // "Alumni" | "Guru"
+  fotoUrl      String?
+  kutipan      String @db.Text
+
+  perusahaan   Perusahaan @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
+  perusahaanId Int
+}
+
+// ─── CHATBOT KNOWLEDGE BASE (MokletBot) ─────────────────────────
+
+model Faq {
+  id         Int    @id @default(autoincrement())
+  kategori   String // "Tentang Moklet" | "PPDB" | "Kurikulum" | dst
+  pertanyaan String @db.Text
+  jawaban    String @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Log percakapan chatbot — opsional, untuk evaluasi & perbaikan FAQ ke depan
+model ChatLog {
+  id         Int      @id @default(autoincrement())
+  pertanyaan String   @db.Text
+  jawaban    String   @db.Text
+  createdAt  DateTime @default(now())
+}
+
+// ─── PESAN MASUK (gabungan Kotak Pertanyaan + Layanan Orang Tua) ─
+
+model PesanMasuk {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  email     String?
+  telp      String?
+  subjek    String
+  pesan     String   @db.Text
+  status    StatusPesan @default(BARU)
+  createdAt DateTime @default(now())
+}
+
+enum StatusPesan {
+  BARU
+  DIPROSES
+  SELESAI
+}

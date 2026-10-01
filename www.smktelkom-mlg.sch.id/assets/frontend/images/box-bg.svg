@@ -1,0 +1,20 @@
+<svg width="1366" height="715.9999999999999" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="1368" height="718" id="canvas_background" fill="none"/>
+ </g>
+
+ <g>
+  <title>Layer 1</title>
+  <g id="box-bg">
+   <rect stroke="null" id="Rectangle_278" width="1367.53851" height="716" fill="#e04e4e" x="-0.33334" y="0"/>
+   <g id="Groupe_100">
+    <rect id="Rectangle_279" width="64" height="64" rx="15" transform="rotate(39 1282.8975830078125,125.5870056152344) " fill="#fff" opacity="0.71" y="93.58701" x="1250.89762"/>
+    <rect id="Rectangle_274" width="25" height="25" rx="8" transform="rotate(39 162.14663696289057,88.62500000000001) " fill="#fcffff" opacity="0.53" y="76.125" x="149.64664"/>
+    <rect id="Rectangle_280" width="25" height="25" rx="8" transform="rotate(39 89.14664459228511,606.625) " fill="#fcffff" opacity="0.53" y="594.125" x="76.64664"/>
+    <rect id="Rectangle_282" width="25" height="25" rx="8" transform="rotate(39 1053.1466064453125,258.625) " fill="#fcffff" opacity="0.53" y="246.125" x="1040.64664"/>
+    <rect id="Rectangle_283" width="25" height="25" rx="8" transform="rotate(39 809.146667480469,641.625) " fill="#fcffff" opacity="0.53" y="629.125" x="796.64664"/>
+   </g>
+  </g>
+ </g>
+</svg>
