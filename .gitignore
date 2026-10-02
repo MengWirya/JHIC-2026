@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# local migration and visual reference material; never ship to production repo
+/reference/
+
 # production
 /build
 

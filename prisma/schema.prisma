@@ -16,11 +16,12 @@ model Admin {
   nama         String
   email        String   @unique
   passwordHash String
-  role         String   @default("admin") // admin | guru | panitia
+  role         String   @default("SUPER_ADMIN")
   createdAt    DateTime @default(now())
 
   kontenList     Konten[]
   perusahaanList Perusahaan[]
+  lowonganList   Lowongan[]
 }
 
 // ─── KONTEN GENERIK (Prestasi, Berita, Produk BLUD, Galeri) ────
@@ -61,7 +62,7 @@ enum StatusKonten {
 
 model Perusahaan {
   id        Int     @id @default(autoincrement())
-  nama      String
+  nama      String    @unique
   logoUrl   String?
   overview  String  @db.Text
   kontak    String?
@@ -74,6 +75,62 @@ model Perusahaan {
 
   tags       PerusahaanTag[]
   testimoni  Testimoni[]
+  lowongan   Lowongan[]
+}
+
+model Lowongan {
+  id             Int           @id @default(autoincrement())
+  slug           String        @unique
+  judulPosisi    String
+  lokasi         String
+  tipe           TipeLowongan
+  deskripsi      String        @db.Text
+  syaratKeahlian String        @db.Text
+  status         StatusLowongan @default(PUBLISHED)
+  perusahaan     Perusahaan    @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
+  perusahaanId   Int
+  admin          Admin         @relation(fields: [adminId], references: [id])
+  adminId        Int
+  lamaran        Lamaran[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([tipe, status])
+  @@index([perusahaanId])
+}
+
+enum TipeLowongan {
+  PKL
+  MAGANG
+  FULL_TIME
+}
+
+enum StatusLowongan {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+model Lamaran {
+  id            Int            @id @default(autoincrement())
+  namaLengkap   String
+  kelasAlumni   String
+  email         String
+  portfolioUrl  String
+  pesanTambahan String?        @db.Text
+  status        StatusLamaran  @default(BARU)
+  lowongan      Lowongan       @relation(fields: [lowonganId], references: [id], onDelete: Cascade)
+  lowonganId    Int
+  createdAt     DateTime       @default(now())
+
+  @@index([lowonganId, status])
+}
+
+enum StatusLamaran {
+  BARU
+  DITINJAU
+  DITERIMA
+  DITOLAK
 }
 
 model TagJurusan {

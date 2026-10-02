@@ -1,6 +1,6 @@
 # Moklet Hub 2.0 — Setup Project
 
-Stack: Next.js 15 (App Router) + TypeScript + Tailwind CSS v4 + Prisma + MySQL + Auth.js + Claude API
+Stack: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Prisma 7 + MySQL/MariaDB + Auth.js + Anthropic/Gemini API
 
 ## 1. Setup Awal
 
@@ -12,29 +12,30 @@ cp .env.example .env
 Isi `.env` dengan:
 - `DATABASE_URL` — koneksi MySQL lokal kalian (bisa pakai XAMPP/Docker untuk development)
 - `AUTH_SECRET` — generate lewat `openssl rand -base64 32`
-- `ANTHROPIC_API_KEY` — dari [console.anthropic.com](https://console.anthropic.com)
+- `ADMIN_PASSWORD` — password admin development
+- `AI_PROVIDER` — `anthropic` atau `gemini`
+- `ANTHROPIC_API_KEY` atau `GEMINI_API_KEY` — sesuai provider yang dipilih
 
 ## 2. Setup Database
 
 ```bash
 npx prisma generate      # generate Prisma Client dari schema.prisma
-npx prisma migrate dev   # bikin tabel di database lokal sesuai skema ERD
+npm run db:migrate       # terapkan initial migration ke database kosong
+npm run db:seed          # isi admin, FAQ, perusahaan, lowongan, dan data demo
+# hard reset lokal (menghapus seluruh data)
+npm run db:reset
 ```
 
 > Perintah `prisma generate`/`migrate` butuh koneksi internet penuh untuk unduh
 > query engine — jalankan ini di laptop kalian sendiri, bukan environment terbatas.
 
-## 3. Migrasi Berita Legacy (One-time)
+## 3. Seed Data Lokal
 
-Folder `reference/` hanya dipakai oleh skrip migrasi developer. Tidak ada route runtime yang membaca HTML atau aset dari folder tersebut.
-
-Setelah migration database diterapkan dan tersedia admin dengan ID yang valid, jalankan:
+Database development menggunakan data bersih dari `prisma/seed.ts`; tidak ada migrasi runtime atau importer dari sistem CI3 lama.
 
 ```bash
-ADMIN_ID=1 npm run migrate:berita
+npm run db:seed
 ```
-
-Skrip membaca artikel lama, membersihkan HTML, lalu menyimpan data ke `Konten` bertipe `BERITA`. Skrip bersifat idempoten berdasarkan slug.
 
 ## 4. Jalankan Development Server
 
@@ -49,11 +50,12 @@ Buka `http://localhost:3000`.
 ```
 src/
 ├── app/
-│   ├── (public)/           # halaman publik (landing, career-industries, tentang-kami)
-│   ├── admin/               # dashboard admin (CRUD konten, perusahaan, dll)
+│   ├── (public)/           # halaman publik native
+│   ├── admin/               # login dan dashboard admin
 │   ├── api/
 │   │   ├── auth/[...nextauth]/  # login admin
-│   │   └── chatbot/         # endpoint MokletBot
+│   │   ├── chatbot/         # endpoint MokletBot
+│   │   └── lamaran/         # endpoint Lamar Cepat
 │   ├── globals.css          # DESIGN TOKEN warna & font ada di sini
 │   └── layout.tsx
 ├── components/               # komponen reusable (Card, Navbar, dll)
@@ -61,28 +63,21 @@ src/
 │   ├── prisma.ts            # koneksi database
 │   └── auth.ts              # konfigurasi Auth.js
 prisma/
-└── schema.prisma            # skema database (7 tabel sesuai ERD)
+├── schema.prisma            # schema native termasuk BKK
+├── seed.ts                  # admin, FAQ, perusahaan, lowongan, demo
+└── migrations/              # initial migration dari database kosong
+tasks/                       # task handoff untuk pekerjaan tersisa
+reference/                   # lokal/ignored: mirror dan visual reference
 ```
 
-## 6. Mengintegrasikan Hasil Ekstraksi Desain dari Website Lama
+## 6. Batas Reference
 
-Tergantung bentuk file yang kalian punya:
+Folder `reference/` berisi mirror HTML/CSS lama dan screenshot/PDF desain. Folder ini di-ignore Git dan tidak boleh dibaca oleh route runtime. Asset yang sudah disetujui untuk aplikasi harus disalin secara sadar ke `public/images/`.
 
-- **Kalau dapat file CSS/HTML mentah** → buka file-nya, cari nilai warna (`color:`, `background:`) dan font (`font-family:`) yang paling sering dipakai di header/tombol utama, lalu ganti placeholder di `src/app/globals.css` (bagian `:root`, ada komentar `TODO` yang jelas).
-- **Kalau dapat kumpulan gambar** → taruh di folder `public/images/`, lalu referensikan lewat `next/image` di komponen terkait.
-- **Kalau dapat file Figma (dari html.to.design)** → buka di Figma, pakai sebagai referensi visual saat membangun komponen React — tidak perlu import otomatis, cukup dicontek manual layout/spacing-nya.
+## 7. Halaman Yang Sudah Tersedia
 
-## 7. Halaman yang Sudah Berfungsi
+Homepage, Tentang Kami, Profil & Prestasi, Program, Alumni, Kontak, Berita, Career Industries, detail lowongan, login admin, dan dashboard lamaran sudah memiliki route native.
 
-`src/app/(public)/career-industries/page.tsx` sudah berisi contoh nyata:
-query Prisma ke database, filter berdasarkan tag jurusan, render card grid.
-Pakai ini sebagai referensi pola untuk halaman lain (Landing Page, Tentang Kami, dst).
+## 8. Pekerjaan Tersisa
 
-## 8. Yang Masih Perlu Dibangun
-
-- [ ] Halaman Landing Page (`src/app/page.tsx` masih default dari create-next-app)
-- [ ] Halaman Tentang Kami (folder sudah ada, kosong)
-- [ ] Dashboard admin + form CRUD (Konten, Perusahaan, Testimoni, FAQ)
-- [ ] Widget chat MokletBot di frontend (API route sudah jadi di `/api/chatbot`)
-- [ ] Seed data awal (`prisma/seed.ts`) dari hasil audit konten yang sudah kita kerjakan
-- [ ] Ganti placeholder warna/font di `globals.css` dengan hasil ekstraksi asli
+Lihat task handoff di `tasks/todo-*.md`. Jangan membuat task baru tanpa memperbarui `MIGRATION-AUDIT.md`.

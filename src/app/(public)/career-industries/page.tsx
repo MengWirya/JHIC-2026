@@ -1,99 +1,18 @@
-import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { SiteHeader } from "@/components/site-header";
 
 export const dynamic = "force-dynamic";
 
-// Server Component — query Prisma langsung di halaman, tanpa perlu API
-// terpisah untuk operasi baca (sesuai prinsip yang sudah kita sepakati).
-export default async function CareerIndustriesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tag?: string }>;
-}) {
-  const { tag } = await searchParams;
+const typeLabels = { PKL: "PKL", MAGANG: "Magang", FULL_TIME: "Full-Time" } as const;
 
-  const [perusahaanList, semuaTag] = await Promise.all([
-    prisma.perusahaan.findMany({
-      where: tag
-        ? { tags: { some: { tag: { nama: tag } } } }
-        : undefined,
-      include: {
-        tags: { include: { tag: true } },
-        testimoni: true,
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.tagJurusan.findMany({ orderBy: { nama: "asc" } }),
+export default async function CareerIndustriesPage({ searchParams }: { searchParams: Promise<{ tipe?: string }> }) {
+  const requestedType = (await searchParams).tipe;
+  const tipe = requestedType === "PKL" || requestedType === "MAGANG" || requestedType === "FULL_TIME" ? requestedType : undefined;
+  const [jobs, companies] = await Promise.all([
+    prisma.lowongan.findMany({ where: { status: "PUBLISHED", tipe }, include: { perusahaan: true }, orderBy: { createdAt: "desc" } }),
+    prisma.perusahaan.findMany({ select: { id: true, nama: true }, orderBy: { nama: "asc" } }),
   ]);
 
-  return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-bold text-[var(--brand-secondary)]">
-        Career Industries
-      </h1>
-      <p className="mt-2 text-gray-600">Choose your path, build your future</p>
-
-      {/* Filter tag — mirip filter role di LinkedIn Jobs */}
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Link
-          href="/career-industries"
-          className={`rounded-full border px-4 py-1.5 text-sm font-medium ${
-            !tag
-              ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
-              : "border-gray-300 text-gray-600"
-          }`}
-        >
-          Semua
-        </Link>
-        {semuaTag.map((t) => (
-          <Link
-            key={t.id}
-            href={`/career-industries?tag=${encodeURIComponent(t.nama)}`}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium ${
-              tag === t.nama
-                ? "border-[var(--brand-primary)] bg-[var(--brand-primary)] text-white"
-                : "border-gray-300 text-gray-600"
-            }`}
-          >
-            {t.nama}
-          </Link>
-        ))}
-      </div>
-
-      {/* Grid card perusahaan */}
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {perusahaanList.length === 0 && (
-          <p className="col-span-2 text-gray-500">
-            Belum ada mitra perusahaan untuk kategori ini.
-          </p>
-        )}
-        {perusahaanList.map((p) => (
-          <div
-            key={p.id}
-            className="rounded-xl border border-gray-200 p-5 shadow-sm"
-          >
-            <h2 className="font-semibold text-[var(--brand-secondary)]">
-              {p.nama}
-            </h2>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {p.tags.map(({ tag }) => (
-                <span
-                  key={tag.id}
-                  className="rounded-full bg-[var(--brand-primary)] px-2.5 py-0.5 text-xs font-medium text-white"
-                >
-                  {tag.nama}
-                </span>
-              ))}
-            </div>
-            <p className="mt-3 text-sm text-gray-600">{p.overview}</p>
-            {p.testimoni[0] && (
-              <p className="mt-3 text-xs italic text-gray-500">
-                ★ &ldquo;{p.testimoni[0].kutipan}&rdquo; — {p.testimoni[0].namaPemberi}
-              </p>
-            )}
-          </div>
-        ))}
-      </div>
-    </main>
-  );
+  return <div className="native-page"><SiteHeader /><main className="career-page"><section className="career-hero"><div className="native-shell career-hero__inner"><div><p className="native-eyebrow">BKK &middot; Career Industries</p><h1>Build your path.<br /><em>Meet your future.</em></h1><p>Jembatan antara talenta Moklet dan industri yang siap bertumbuh bersama generasi digital.</p><div className="career-hero__actions"><a className="native-button native-button--light" href="#list-industries">Lihat peluang <span aria-hidden="true">-&gt;</span></a><Link className="career-hero__text-link" href="/kontak">Hubungi BKK <span aria-hidden="true">-&gt;</span></Link></div></div><div className="career-hero__art" aria-hidden="true"><span>career</span><strong>industries</strong><i>01</i></div></div></section><section className="career-list-section" id="list-industries"><div className="native-shell"><div className="career-list-heading"><div><p className="native-eyebrow native-eyebrow--dark">List Industries</p><h2>Peluang untuk langkah berikutnya.</h2></div><p>Pilih jalur yang paling dekat dengan minat dan keahlianmu.</p></div><div className="career-toolbar"><div className="career-filters"><Link className={!tipe ? "is-active" : ""} href="/career-industries">Semua posisi</Link>{Object.entries(typeLabels).map(([value, label]) => <Link className={tipe === value ? "is-active" : ""} href={`/career-industries?tipe=${value}`} key={value}>{label}</Link>)}</div><span className="career-result-count">{jobs.length} posisi &middot; {companies.length} industri</span></div><div className="career-list-layout"><aside className="career-company-list"><p>Partner industri</p>{companies.map((company) => <a href={`#company-${company.id}`} key={company.id}><span>{company.nama.slice(0, 2).toUpperCase()}</span>{company.nama}</a>)}</aside><section className="career-job-grid">{jobs.map((job) => <article className="career-job-card" id={`company-${job.perusahaan.id}`} key={job.id}><div className="career-job-card__brand"><span>{job.perusahaan.nama.slice(0, 2).toUpperCase()}</span><div><p>{job.perusahaan.nama}</p><small>{job.lokasi}</small></div><span className={`career-badge career-badge--${job.tipe.toLowerCase()}`}>{typeLabels[job.tipe]}</span></div><h3><Link href={`/career-industries/${job.slug}`}>{job.judulPosisi}</Link></h3><p className="career-job-card__description">{job.deskripsi}</p><div className="career-tags">{job.syaratKeahlian.split(",").map((tag) => <span key={tag}>{tag.trim()}</span>)}</div><Link className="career-apply-link" href={`/career-industries/${job.slug}#lamar`}>Lamar Cepat <span aria-hidden="true">-&gt;</span></Link></article>)}</section></div>{jobs.length === 0 && <p className="career-empty">Belum ada posisi untuk filter ini.</p>}</div></section></main></div>;
 }

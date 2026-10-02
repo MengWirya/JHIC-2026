@@ -20,6 +20,31 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
+async function generateAnswer(question: string, systemPrompt: string) {
+  const provider = process.env.AI_PROVIDER ?? "anthropic";
+  if (provider === "gemini") {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) throw new Error("GEMINI_API_KEY is not configured.");
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nPertanyaan pengguna: ${question}` }] }] }),
+    });
+    const data = await response.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "Maaf, MokletBot belum bisa menjawab saat ini.";
+  }
+
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error("ANTHROPIC_API_KEY is not configured.");
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 500, system: systemPrompt, messages: [{ role: "user", content: question }] }),
+  });
+  const data = await response.json();
+  return data?.content?.find((c: { type: string }) => c.type === "text")?.text ?? "Maaf, MokletBot belum bisa menjawab saat ini.";
+}
+
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for") ?? "unknown";
   if (isRateLimited(ip)) {
@@ -52,25 +77,7 @@ kontak WhatsApp admin sekolah. Gunakan Bahasa Indonesia yang ramah dan singkat.
 ${knowledgeBase}`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY!,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 500,
-        system: systemPrompt,
-        messages: [{ role: "user", content: pertanyaan }],
-      }),
-    });
-
-    const data = await response.json();
-    const jawaban =
-      data?.content?.find((c: { type: string }) => c.type === "text")?.text ??
-      "Maaf, MokletBot sedang tidak bisa menjawab. Coba tanya admin langsung, ya.";
+    const jawaban = await generateAnswer(pertanyaan, systemPrompt);
 
     // Log percakapan untuk evaluasi cakupan FAQ ke depan (opsional tapi berguna)
     await prisma.chatLog.create({ data: { pertanyaan, jawaban } });

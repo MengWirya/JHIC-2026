@@ -1,23 +1,22 @@
 "use client";
 
-import { ArrowUpRight, Camera, Globe2, Menu, MessageCircle, Video, X } from "lucide-react";
+import { ArrowUpRight, Camera, ChevronDown, Globe2, Menu, MessageCircle, Video, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const navigation = [
   { label: "Beranda", href: "/" },
-  { label: "Tentang Kami", href: "/tentang-kami" },
-  { label: "Program", href: "/program" },
-  { label: "Alumni", href: "/alumni" },
-  { label: "Hubungi Kami", href: "/kontak" },
+  { label: "Tentang Kami", href: "/tentang-kami", items: [{ label: "Profil & Prestasi", href: "/profil-prestasi" }, { label: "Hubungi Kami", href: "/kontak" }] },
+  { label: "Program", href: "/program", items: [{ label: "Program Keahlian", href: "/program" }] },
+  { label: "Career Industries", href: "/career-industries", items: [{ label: "List Industries", href: "/career-industries" }, { label: "Lamar Cepat", href: "/career-industries#lamar" }] },
 ];
 
 const socialLinks = [
-  { label: "Facebook", href: "https://www.facebook.com/smktelkommalang", icon: Globe2 },
-  { label: "Instagram", href: "https://www.instagram.com/smktelkommalang", icon: Camera },
-  { label: "Twitter", href: "https://twitter.com/smktelkommlg", icon: MessageCircle },
-  { label: "YouTube", href: "https://www.youtube.com/@smktelkommalang", icon: Video },
+  { label: "Facebook", href: "#", icon: Globe2 },
+  { label: "Instagram", href: "https://www.instagram.com/smktelkommalang/", icon: Camera },
+  { label: "Twitter", href: "#", icon: MessageCircle },
+  { label: "YouTube", href: "https://www.youtube.com/@SMKTelkomMalangOfficial", icon: Video },
 ];
 
 export function SiteHeader() {
@@ -50,16 +49,17 @@ export function SiteHeader() {
 
         <nav className={`site-header__nav${isOpen ? " is-open" : ""}`} aria-label="Navigasi utama">
           {navigation.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-              {item.label}
-            </Link>
+            <div className={`site-header__menu${item.items ? " has-submenu" : ""}`} key={item.href}>
+              <Link href={item.href} onClick={() => setIsOpen(false)}>{item.label}{item.items && <ChevronDown size={14} />}</Link>
+              {item.items && <div className="site-header__submenu">{item.items.map((subItem) => <Link key={subItem.href} href={subItem.href} onClick={() => setIsOpen(false)}>{subItem.label}<ArrowUpRight size={14} /></Link>)}</div>}
+            </div>
           ))}
           <div className="site-header__socials" aria-label="Media sosial">
             {socialLinks.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} title={label}><Icon size={15} /></a>)}
           </div>
           <div className="site-header__ctas">
-            <a className="site-header__cta" href="https://ppdb.telkomschools.sch.id/signup?lemdik=51" target="_blank" rel="noreferrer">PPDB <ArrowUpRight size={15} /></a>
-            <a className="site-header__cta site-header__cta--secondary" href="https://mikrotikacademy.telkomschools.sch.id/" target="_blank" rel="noreferrer">MikroTik Academy <ArrowUpRight size={15} /></a>
+            <a className="site-header__cta" href="https://ppdb.telkomschools.sch.id/" target="_blank" rel="noreferrer">Daftar PPDB 2026 <ArrowUpRight size={15} /></a>
+            <a className="site-header__cta site-header__cta--secondary" href="https://www.smktelkom-mlg.sch.id/p/about-mikrotik-academy-program.html" target="_blank" rel="noreferrer">MikroTik Academy <ArrowUpRight size={15} /></a>
           </div>
         </nav>
       </div>

@@ -1,107 +1,101 @@
-# Task 01 - Legacy Website Extraction Audit
+# Moklet Hub 2.0 - Migration Audit
 
-## Architecture correction status - 2026-10-02
+Tanggal audit: 2026-10-02
+Target: website native Next.js untuk SMK Telkom Malang dan demo final JHIC 2.0.
 
-- Legacy bridge `src/lib/legacy-site.tsx` and catch-all route `src/app/[...legacy]/page.tsx` have been removed.
-- HTML and legacy assets now live under `reference/` and are excluded from ESLint; they are not imported by `src/`.
-- Native `/berita` listing and `/berita/[slug]` detail routes query Prisma `Konten` records.
-- `scripts/migrate-berita.ts` is a manual, idempotent migration utility. It is not called by the application.
-- `Konten.slug` is now unique; apply `prisma/migrations/20261002190000_add_konten_slug/migration.sql` before running the importer.
+## 1. Baseline Dan Batasan
 
-## Source inventory
+- Framework aktif: Next.js 16, React 19, TypeScript, Tailwind CSS v4.
+- Database: Prisma 7 dengan MySQL/MariaDB adapter.
+- Auth: Auth.js Credentials.
+- Reference legacy: tersimpan lokal di `reference/` dan di-ignore Git.
+- Reference tidak boleh diimport, dibaca filesystem-nya, atau dirender oleh `src/` saat request.
+- PPDB tetap external link ke `https://ppdb.telkomschools.sch.id/`.
+- BKK/Career Industries adalah sistem native independen dan tidak menggunakan API CI3.
+- Deployment Webuzo/VPS ditunda sampai akses infrastructure diberikan.
 
-- Legacy CSS files: 5
-- Image assets discovered: 178
-- Assets migrated: 176
-- Sitemap files: none found
-- Legacy HTML and CSS remain under `www.smktelkom-mlg.sch.id/` as the project reference mirror and were not copied into the Next.js source tree.
+## 2. Yang Sudah Selesai
 
-## Design tokens
+### Arsitektur Dan Repository
 
-The most-used brand-relevant colors found in the legacy CSS were:
+- Legacy bridge dan catch-all route sudah dihapus.
+- CSS legacy tidak lagi dimuat oleh halaman aktif.
+- Asset legacy dan desain root dipindahkan ke `reference/`.
+- `reference/` di-ignore Git agar mirror HTML, CSS, PDF, dan screenshot tidak membebani repository.
+- Header native memiliki responsive menu, dropdown hover, sosial media, CTA PPDB, dan MikroTik Academy.
 
-- `#1c3547` - primary dark navy used as the main dark brand color
-- `#e04e4e` - red accent used by the legacy theme
-- `#fff` / `#ffffff` - primary light surface
-- `#f8f9fa` - neutral light surface
-- `#6c757d` and `#828893` - secondary text tones
+### Public UI
 
-The Next.js tokens are now:
+- Homepage native dengan hero, program RPL/TKJ/GIM, CTA PPDB, dan MokletBot floating.
+- Halaman Tentang Kami.
+- Halaman Profil & Prestasi native berbasis Prisma.
+- Portal Career Industries dengan hero, partner list, filter PKL/Magang/Full-Time, kartu lowongan, detail posisi, dan Lamar Cepat.
+- Halaman berita listing dan detail berbasis slug Prisma.
+- Halaman Program, Alumni, dan Kontak.
 
-- `--brand-primary: #e04e4e`
-- `--brand-secondary: #1c3547`
+### Data Dan API
 
-## Fonts
+- Initial Prisma migration dibuat dari database kosong.
+- Model BKK: `Lowongan`, `Lamaran`, `Perusahaan`, dan tag terkait.
+- Seed idempoten tersedia di `prisma/seed.ts`.
+- Seed berisi Super Admin, FAQ resmi awal, perusahaan, lowongan, berita, dan lamaran demo.
+- API `/api/lamaran` dan `/api/pesan` tersedia.
+- MokletBot mendukung provider Anthropic atau Gemini melalui `AI_PROVIDER`.
 
-- Google Font detected: Poppins, weights 300, 400, 500, 600, and 700.
-- Poppins is loaded through `next/font/google` in `src/app/layout.tsx`.
-- Local font files found: Font Awesome brand/solid files only. They were not copied because they are icon fonts, not the site's body font, and the new app already has `lucide-react` available.
+### Validasi Yang Sudah Dilakukan
 
-## Migrated assets
+- `npm run lint` lulus.
+- `npx tsc --noEmit --incremental false` lulus.
+- `npx prisma validate` lulus.
+- `npm run build` lulus.
+- Production build tidak menghasilkan route catch-all legacy.
 
-| Category | Count | Source |
-| --- | ---: | --- |
-| `public/images/logo/` | 2 | `assets/frontend/images/logo_*.png` |
-| `public/images/site/` | 21 | `assets/frontend/images/` and `portflio/` excluding duplicate logos |
-| `public/images/berita/` | 145 | `assets/upload/image/thumbs/` |
-| `public/images/galeri/` | 6 | `assets/upload/galeri/` |
-| `public/images/testimoni/` | 2 | `assets/upload/image/testi/` |
-| **Total** | **176** | Filtered school and interface assets |
+## 3. Pekerjaan Yang Belum Selesai
 
-The source filenames were preserved for traceability. The logo files are provisional legacy assets and should be replaced with official high-resolution versions after the school confirms the brand files.
+Urutan kerja dan kebutuhan tiap pekerjaan dijelaskan di folder `tasks/`:
 
-## Validation notes
+1. `tasks/todo-01-database-seed-verification.md`
+2. `tasks/todo-02-admin-crud-and-access.md`
+3. `tasks/todo-03-public-content-and-landing.md`
+4. `tasks/todo-04-performance-and-qa.md`
+5. `tasks/todo-05-webuzo-deployment.md`
+6. `tasks/todo-06-assets-copy-and-final-deck.md`
+7. `tasks/todo-07-chatbot-and-security-hardening.md`
 
-- `src/app/globals.css` now uses the audited colors and Poppins font token.
-- The root metadata now describes SMK Telkom Malang instead of the Create Next App placeholder.
-- The repository lint command currently scans the embedded legacy mirror and reports errors from minified legacy JavaScript. Those findings are outside the new Next.js source and should be excluded from lint scope in a later task.
-- No sitemap was available in the mirror, so the legacy URL structure must be reconstructed from the HTML navigation and content folders during route planning.
+## 4. Status Per Area
 
-## TypeScript route migration
+| Area | Status | Catatan |
+| --- | --- | --- |
+| Native architecture | Done | Tidak ada runtime dependency ke reference |
+| Header and Career Industries prototype | Done | Perlu validasi visual runtime setelah seed |
+| Database schema and initial migration | Done | Belum diterapkan ke database milik user |
+| Seed data | Ready | Belum dijalankan tanpa `DATABASE_URL` |
+| Admin login/dashboard | Prototype | CRUD lengkap dan middleware masih perlu diselesaikan |
+| Content sections | Partial | BLUD, galeri, agenda, dan data prestasi perlu diisi/dirapikan |
+| MokletBot | Prototype | Key, FAQ final, resilience, dan security perlu diuji |
+| Lighthouse/load test | Pending | Target desktop/mobile >90 belum dibuktikan |
+| VPS/Webuzo deployment | Pending | Sengaja ditunda |
+| Official assets and final deck | Pending | Placeholder masih digunakan |
 
-- The 260 legacy HTML files are exposed through TypeScript App Router pages rather than copied as new HTML files.
-- `src/lib/legacy-site.tsx` reads each legacy document on the server, extracts its body, normalizes internal links, and maps relative asset URLs to `/legacy/assets/`.
-- `src/app/[...legacy]/page.tsx` generates the equivalent routes for every legacy HTML path. The homepage is rendered through `src/app/page.tsx`.
-- The original CSS files are served locally from `public/legacy/assets/` through the root layout, preserving the reference site's visual rules while allowing the new app to evolve away from them incrementally.
-- Production validation completed successfully with 264 generated routes.
+## 5. Setup Development Bersih
 
-## Priority 01 - Native Next.js homepage
+```bash
+Copy-Item .env.example .env
+# isi DATABASE_URL dan ADMIN_PASSWORD
+npm run db:reset
+npm run db:seed
+npm run dev
+```
 
-- Replaced the homepage's `LegacyDocument` bridge with a native TypeScript/React landing page in `src/app/page.tsx`.
-- Added `src/components/site-header.tsx` with a responsive Next.js navigation, mobile menu, sticky state, and PPDB CTA.
-- Added native homepage sections for the school's positioning, benefits, study programs, news CTA, and footer.
-- Added scoped `.native-*` styles to `src/app/globals.css`, using the audited brand colors, Poppins typography, and migrated school assets.
-- Kept `src/app/[...legacy]/page.tsx` for the remaining legacy routes so the broader URL migration can continue incrementally without blocking the native homepage.
-- Validation: TypeScript check, focused ESLint, and production build passed; 264 pages generated.
-- Final native homepage smoke test: HTTP 200 at `/`, native page/header/hero selectors rendered, and desktop screenshot captured successfully at 1440px.
+Jangan menjalankan `db:reset` pada database production. API key AI dan credential production tidak boleh di-commit.
 
-## Priority 02 - Initial performance isolation
+## 6. Definition Of Done
 
-- Removed the five legacy stylesheets from the root layout so native Next.js pages no longer download the legacy Bootstrap/theme CSS by default.
-- Legacy stylesheets are now attached only by `src/lib/legacy-site.tsx` when a fallback legacy document is rendered.
-- This keeps the native homepage CSS path smaller and preserves styling for the remaining legacy routes while the migration continues.
-
-## Priority 03 - Native Tentang Kami page
-
-- Added `src/app/(public)/tentang-kami/page.tsx` as a native Next.js page for school history, principles, and mission-oriented content.
-- Updated the native header to point `Tentang Kami` to `/tentang-kami` instead of the legacy `/p/profil-sekolah` route.
-- Added responsive native styles for the about page in `src/app/globals.css`.
-- Browser smoke test passed: `/` and `/tentang-kami` returned HTTP 200 with native markup and 0 legacy stylesheets; `/berita` returned HTTP 200 with the legacy fallback and 5 scoped legacy stylesheets.
-
-## Priority 04 - Native MokletBot frontend widget
-
-- Added `src/components/moklet-bot.tsx` as a client-side floating chat widget using the existing `/api/chatbot` POST contract (`{ pertanyaan }`).
-- Mounted the widget in `src/app/layout.tsx` so it is available on native and legacy-rendered routes without changing the legacy HTML/CSS implementation.
-- Added the pitch-approved quick replies: `Info PPDB 2026`, `Lowongan BKK`, and `Daftar Jurusan`.
-- Added user/bot message history, loading/typing state, disabled-submit behavior, and a user-visible fallback for network/API errors.
-- Added scoped `.moklet-bot__*` styles in `src/app/globals.css`, including a mobile width constraint and a viewport-safe chat panel height.
-- The widget intentionally does not implement a local PPDB form; PPDB remains an external CTA as defined by the product plan.
-- Focused validation passed: `npx eslint src/components/moklet-bot.tsx src/app/layout.tsx`.
-
-## Priority 05 - Repository hygiene fixes
-
-- Added `www.smktelkom-mlg.sch.id/**` and `public/legacy/**` to ESLint's global ignores so mirrored HTML/CSS/vendor JavaScript cannot contaminate native source lint results.
-- Removed the committed hard-coded MySQL fallback from `prisma.config.ts`.
-- Prisma commands now fail explicitly when `DATABASE_URL` is missing; database credentials must come from the environment.
-- Replaced the native Career Industries filter anchors with Next.js `Link` components after the cleaned lint run exposed the internal-navigation error.
-- Validation: `npm run lint` passes with 0 errors and 5 intentional warnings for stylesheet tags used only by the legacy compatibility renderer.
+- Semua task `todo-*.md` selesai atau memiliki keputusan eksplisit dari tim.
+- Database production sudah dimigrasikan dan di-seed sesuai keputusan.
+- Admin CRUD dan route protection selesai.
+- Career Industries dapat menerima dan menampilkan lamaran dari database.
+- Lighthouse Desktop dan Mobile mencapai target yang disepakati.
+- Website ter-deploy di VPS Jagoan Hosting melalui Webuzo.
+- Asset resmi dan pitch deck final sudah digunakan.
+- Tidak ada secret, reference mirror, generated build, atau file duplikat berat di repository.

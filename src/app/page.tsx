@@ -28,7 +28,7 @@ export default function Home() {
               <h1>School of <em>Global Digitalent</em></h1>
               <p className="native-hero__lead">Tempat tumbuhnya talenta teknologi yang siap berkarya, berkolaborasi, dan membawa dampak untuk dunia.</p>
               <div className="native-actions">
-                <Link className="native-button native-button--light" href="/program">Join Now <ArrowRight size={17} /></Link>
+                <a className="native-button native-button--light" href="https://ppdb.telkomschools.sch.id/" target="_blank" rel="noreferrer">Daftar PPDB 2026 <ArrowRight size={17} /></a>
                 <Link className="native-text-link" href="/tentang-kami">Kenali Moklet <ArrowRight size={16} /></Link>
               </div>
             </div>
