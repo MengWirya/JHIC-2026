@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export default async function CareerIndustriesPage({
 
       {/* Filter tag — mirip filter role di LinkedIn Jobs */}
       <div className="mt-6 flex flex-wrap gap-2">
-        <a
+        <Link
           href="/career-industries"
           className={`rounded-full border px-4 py-1.5 text-sm font-medium ${
             !tag
@@ -43,9 +44,9 @@ export default async function CareerIndustriesPage({
           }`}
         >
           Semua
-        </a>
+        </Link>
         {semuaTag.map((t) => (
-          <a
+          <Link
             key={t.id}
             href={`/career-industries?tag=${encodeURIComponent(t.nama)}`}
             className={`rounded-full border px-4 py-1.5 text-sm font-medium ${
@@ -55,7 +56,7 @@ export default async function CareerIndustriesPage({
             }`}
           >
             {t.nama}
-          </a>
+          </Link>
         ))}
       </div>
 

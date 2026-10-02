@@ -89,4 +89,11 @@ The source filenames were preserved for traceability. The logo files are provisi
 - Added scoped `.moklet-bot__*` styles in `src/app/globals.css`, including a mobile width constraint and a viewport-safe chat panel height.
 - The widget intentionally does not implement a local PPDB form; PPDB remains an external CTA as defined by the product plan.
 - Focused validation passed: `npx eslint src/components/moklet-bot.tsx src/app/layout.tsx`.
-- Full `npm run lint` remains blocked by the existing legacy mirror: it scans minified JavaScript under `www.smktelkom-mlg.sch.id/` and reports 385 errors / 1481 warnings outside the native source. This should be addressed by lint-scope configuration in a later task, not by modifying mirrored vendor files.
+
+## Priority 05 - Repository hygiene fixes
+
+- Added `www.smktelkom-mlg.sch.id/**` and `public/legacy/**` to ESLint's global ignores so mirrored HTML/CSS/vendor JavaScript cannot contaminate native source lint results.
+- Removed the committed hard-coded MySQL fallback from `prisma.config.ts`.
+- Prisma commands now fail explicitly when `DATABASE_URL` is missing; database credentials must come from the environment.
+- Replaced the native Career Industries filter anchors with Next.js `Link` components after the cleaned lint run exposed the internal-navigation error.
+- Validation: `npm run lint` passes with 0 errors and 5 intentional warnings for stylesheet tags used only by the legacy compatibility renderer.
