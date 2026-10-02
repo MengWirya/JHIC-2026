@@ -1,5 +1,13 @@
 # Task 01 - Legacy Website Extraction Audit
 
+## Architecture correction status - 2026-10-02
+
+- Legacy bridge `src/lib/legacy-site.tsx` and catch-all route `src/app/[...legacy]/page.tsx` have been removed.
+- HTML and legacy assets now live under `reference/` and are excluded from ESLint; they are not imported by `src/`.
+- Native `/berita` listing and `/berita/[slug]` detail routes query Prisma `Konten` records.
+- `scripts/migrate-berita.ts` is a manual, idempotent migration utility. It is not called by the application.
+- `Konten.slug` is now unique; apply `prisma/migrations/20261002190000_add_konten_slug/migration.sql` before running the importer.
+
 ## Source inventory
 
 - Legacy CSS files: 5

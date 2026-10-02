@@ -28,8 +28,8 @@ export default function Home() {
               <h1>School of <em>Global Digitalent</em></h1>
               <p className="native-hero__lead">Tempat tumbuhnya talenta teknologi yang siap berkarya, berkolaborasi, dan membawa dampak untuk dunia.</p>
               <div className="native-actions">
-                <Link className="native-button native-button--light" href="/p/profil-jurusan">Jelajahi program <ArrowRight size={17} /></Link>
-                <Link className="native-text-link" href="/p/profil-sekolah">Kenali Moklet <ArrowRight size={16} /></Link>
+                <Link className="native-button native-button--light" href="/program">Join Now <ArrowRight size={17} /></Link>
+                <Link className="native-text-link" href="/tentang-kami">Kenali Moklet <ArrowRight size={16} /></Link>
               </div>
             </div>
             <div className="native-hero__visual">
@@ -51,9 +51,9 @@ export default function Home() {
 
         <section className="native-section native-section--programs">
           <div className="native-shell">
-            <div className="native-section-heading"><div><p className="native-eyebrow native-eyebrow--dark">Program keahlian</p><h2>Mulai dari rasa ingin tahu.</h2></div><Link className="native-text-link native-text-link--dark" href="/p/profil-jurusan">Lihat semua program <ArrowRight size={16} /></Link></div>
+            <div className="native-section-heading"><div><p className="native-eyebrow native-eyebrow--dark">Program keahlian</p><h2>Mulai dari rasa ingin tahu.</h2></div><Link className="native-text-link native-text-link--dark" href="/program">Lihat semua program <ArrowRight size={16} /></Link></div>
             <div className="native-program-grid">
-              {programs.map((program) => <article className="native-program" key={program.short}><div className="native-program__image"><Image src={program.image} alt={program.title} fill sizes="(max-width: 700px) 90vw, 30vw" /></div><div className="native-program__body"><span>{program.short}</span><h3>{program.title}</h3><p>{program.text}</p><Link href="/p/profil-jurusan" aria-label={`Pelajari ${program.title}`}><ArrowUpRight size={20} /></Link></div></article>)}
+              {programs.map((program) => <article className="native-program" key={program.short}><div className="native-program__image"><Image src={program.image} alt={program.title} fill sizes="(max-width: 700px) 90vw, 30vw" /></div><div className="native-program__body"><span>{program.short}</span><h3>{program.title}</h3><p>{program.text}</p><Link href="/program" aria-label={`Pelajari ${program.title}`}><ArrowUpRight size={20} /></Link></div></article>)}
             </div>
           </div>
         </section>

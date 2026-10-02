@@ -24,7 +24,19 @@ npx prisma migrate dev   # bikin tabel di database lokal sesuai skema ERD
 > Perintah `prisma generate`/`migrate` butuh koneksi internet penuh untuk unduh
 > query engine — jalankan ini di laptop kalian sendiri, bukan environment terbatas.
 
-## 3. Jalankan Development Server
+## 3. Migrasi Berita Legacy (One-time)
+
+Folder `reference/` hanya dipakai oleh skrip migrasi developer. Tidak ada route runtime yang membaca HTML atau aset dari folder tersebut.
+
+Setelah migration database diterapkan dan tersedia admin dengan ID yang valid, jalankan:
+
+```bash
+ADMIN_ID=1 npm run migrate:berita
+```
+
+Skrip membaca artikel lama, membersihkan HTML, lalu menyimpan data ke `Konten` bertipe `BERITA`. Skrip bersifat idempoten berdasarkan slug.
+
+## 4. Jalankan Development Server
 
 ```bash
 npm run dev
@@ -32,7 +44,7 @@ npm run dev
 
 Buka `http://localhost:3000`.
 
-## 4. Struktur Folder
+## 5. Struktur Folder
 
 ```
 src/
@@ -52,7 +64,7 @@ prisma/
 └── schema.prisma            # skema database (7 tabel sesuai ERD)
 ```
 
-## 5. Mengintegrasikan Hasil Ekstraksi Desain dari Website Lama
+## 6. Mengintegrasikan Hasil Ekstraksi Desain dari Website Lama
 
 Tergantung bentuk file yang kalian punya:
 
@@ -60,13 +72,13 @@ Tergantung bentuk file yang kalian punya:
 - **Kalau dapat kumpulan gambar** → taruh di folder `public/images/`, lalu referensikan lewat `next/image` di komponen terkait.
 - **Kalau dapat file Figma (dari html.to.design)** → buka di Figma, pakai sebagai referensi visual saat membangun komponen React — tidak perlu import otomatis, cukup dicontek manual layout/spacing-nya.
 
-## 6. Halaman Contoh yang Sudah Berfungsi
+## 7. Halaman yang Sudah Berfungsi
 
 `src/app/(public)/career-industries/page.tsx` sudah berisi contoh nyata:
 query Prisma ke database, filter berdasarkan tag jurusan, render card grid.
 Pakai ini sebagai referensi pola untuk halaman lain (Landing Page, Tentang Kami, dst).
 
-## 7. Yang Masih Perlu Dibangun
+## 8. Yang Masih Perlu Dibangun
 
 - [ ] Halaman Landing Page (`src/app/page.tsx` masih default dari create-next-app)
 - [ ] Halaman Tentang Kami (folder sudah ada, kosong)

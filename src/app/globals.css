@@ -33,167 +33,6 @@ body {
   font-family: var(--font-poppins), sans-serif;
 }
 
-.legacy-page {
-  min-height: 100%;
-}
-
-@media (min-width: 992px) {
-  body .legacy-page .navbar-header {
-    position: relative;
-    z-index: 1030;
-  }
-
-  body .legacy-page .navbar-header > .navbar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 1030;
-    min-height: 88px;
-    padding: 0.5rem 1rem;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease,
-      padding 0.2s ease;
-  }
-
-  body .legacy-page .navbar-header > .navbar > .container {
-    width: 100%;
-    max-width: 1140px;
-    min-height: 72px;
-    margin-right: auto;
-    margin-left: auto;
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  body .legacy-page .navbar-header .navbar-brand {
-    display: block;
-    flex: 0 0 150px;
-    height: 38px;
-    margin-right: 1rem;
-    padding: 0;
-    background-position: left center;
-    background-repeat: no-repeat;
-    background-size: 150px;
-  }
-
-  body .legacy-page .navbar-header .navbar-collapse {
-    display: flex !important;
-    flex: 1 1 auto;
-    flex-basis: auto !important;
-    align-items: center;
-    justify-content: flex-end;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav {
-    display: flex !important;
-    flex: 0 0 auto;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center;
-    justify-content: flex-end;
-    width: max-content;
-    margin: 0 0 0 auto !important;
-    padding-left: 0;
-    list-style: none;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav > li {
-    display: block;
-    flex: 0 0 auto;
-    min-width: max-content;
-    position: relative;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav > li > .dropdown {
-    display: block;
-    width: max-content;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav > li > a,
-  body .legacy-page .navbar-header .navbar-nav > li > .dropdown > a {
-    display: inline-block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: #828893 !important;
-    white-space: nowrap;
-  }
-
-  body .legacy-page .navbar-header .navbar-toggler {
-    display: none;
-  }
-
-  body .legacy-page .navbar-header > .navbar.sticky {
-    background-color: #ffffff;
-    padding-top: 0;
-    padding-bottom: 0;
-    box-shadow: 0 8px 28px 2px rgba(61, 61, 61, 0.12);
-  }
-
-  body .legacy-page .navbar-header > .navbar.sticky > .container {
-    min-height: 72px;
-  }
-
-  body .legacy-page .navbar-header > .navbar.sticky .navbar-brand {
-    background-image: url("/legacy/assets/frontend/images/logo_hitam.png");
-  }
-}
-
-@media (max-width: 991.98px) {
-  body .legacy-page .navbar-header > .navbar {
-    min-height: 54px;
-  }
-
-  body .legacy-page .navbar-header > .navbar > .container {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  body .legacy-page .navbar-header .navbar-collapse {
-    flex-basis: 100%;
-    flex-grow: 1;
-    width: 100%;
-    background-color: #ffffff;
-  }
-
-  body .legacy-page .navbar-header .navbar-collapse:not(.show) {
-    display: none !important;
-  }
-
-  body .legacy-page .navbar-header .navbar-collapse.show {
-    display: block !important;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav {
-    display: flex !important;
-    width: 100%;
-    flex-direction: column !important;
-    align-items: stretch;
-    margin: 0 !important;
-    padding: 0;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav > li,
-  body .legacy-page .navbar-header .navbar-nav > li > .dropdown {
-    display: block;
-    width: 100%;
-    min-width: 0;
-  }
-
-  body .legacy-page .navbar-header .navbar-nav > li > a,
-  body .legacy-page .navbar-header .navbar-nav > li > .dropdown > a {
-    display: block !important;
-    width: 100%;
-    padding: 12px 10px !important;
-    line-height: 20px !important;
-    white-space: normal;
-  }
-}
-
 .native-page {
   --native-ink: #142b3a;
   --native-muted: #687684;
@@ -263,6 +102,11 @@ body {
 }
 
 .site-header__nav a:hover { color: var(--brand-primary); }
+
+.site-header__socials, .site-header__ctas { display: flex; align-items: center; gap: 10px; }
+.site-header__socials a { padding: 5px; }
+.site-header__ctas { gap: 8px; }
+.site-header__cta--secondary { padding-inline: 12px; font-size: 11px !important; }
 
 .site-header__cta {
   padding: 12px 16px;
@@ -399,3 +243,12 @@ body {
 .moklet-bot__form { display: flex; gap: 8px; padding: 12px 16px 16px; background: #fff; }.moklet-bot__form input { min-width: 0; flex: 1; border: 1px solid var(--native-line); padding: 11px 12px; color: var(--native-ink); font: inherit; font-size: 12px; outline: none; }.moklet-bot__form input:focus { border-color: var(--brand-primary); }.moklet-bot__form button { display: grid; width: 40px; flex: 0 0 40px; place-items: center; border: 0; background: var(--brand-primary); color: #fff; cursor: pointer; }.moklet-bot__form button:disabled { cursor: not-allowed; opacity: .45; }
 .moklet-bot__trigger { display: grid; width: 56px; height: 56px; place-items: center; border: 0; border-radius: 50%; background: var(--brand-primary); color: #fff; box-shadow: 0 10px 24px rgba(20,43,58,.22); cursor: pointer; }
 @media (max-width: 560px) { .moklet-bot { right: 16px; bottom: 16px; }.moklet-bot__panel { max-height: calc(100vh - 96px); }.moklet-bot__messages { max-height: 280px; } }
+
+.native-news-page, .native-article-page, .native-contact-page, .native-program-page, .native-alumni-page { padding: 160px 0 110px; background: #f7f8f6; }
+.native-news-page h1, .native-article-page h1, .native-contact-page h1, .native-program-page h1, .native-alumni-page h1 { max-width: 850px; margin: 0; color: var(--native-ink); font-size: clamp(42px, 6vw, 78px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+.native-news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 64px; }
+.native-news-card { overflow: hidden; border: 1px solid var(--native-line); background: #fff; }
+.native-news-card__image { aspect-ratio: 16 / 9; background: #e9eeee; }.native-news-card__image img { width: 100%; height: 100%; object-fit: cover; }.native-news-card__body { padding: 22px; }.native-news-card__body time, .native-article-page time { color: var(--native-muted); font-size: 12px; }.native-news-card h2 { margin: 12px 0 10px; font-size: 21px; line-height: 1.2; }.native-news-card h2 a { color: var(--native-ink); text-decoration: none; }.native-news-card p { margin: 0; color: var(--native-muted); font-size: 13px; line-height: 1.7; }.native-empty { margin-top: 50px; color: var(--native-muted); }.native-pagination { display: flex; justify-content: space-between; margin-top: 46px; }.native-pagination a { color: var(--brand-primary); font-size: 13px; font-weight: 600; text-decoration: none; }
+.native-article-page article { max-width: 960px; }.native-article-page h1 { margin-bottom: 20px; }.native-article-page__image { width: 100%; height: auto; margin-top: 42px; }.native-article-page__content { max-width: 760px; margin-top: 42px; color: var(--native-muted); font-size: 16px; line-height: 1.85; }.native-article-page__content img { max-width: 100%; height: auto; }.native-article-page__content h3 { color: var(--native-ink); }
+.native-contact-grid, .native-program-grid--page, .native-alumni-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 60px; }.native-contact-panel, .native-program-panel, .native-alumni-panel { padding: 28px; border-top: 2px solid var(--brand-primary); background: #fff; }.native-contact-panel h2, .native-program-panel h2, .native-alumni-panel h2 { margin: 0 0 14px; color: var(--native-ink); font-size: 23px; }.native-contact-panel p, .native-program-panel p, .native-alumni-panel p { color: var(--native-muted); line-height: 1.75; }.native-contact-form { display: grid; gap: 12px; }.native-contact-form input, .native-contact-form textarea { width: 100%; border: 1px solid var(--native-line); padding: 12px; color: var(--native-ink); font: inherit; }.native-contact-form textarea { min-height: 140px; resize: vertical; }.native-contact-form button { width: fit-content; border: 0; cursor: pointer; }
+@media (max-width: 800px) { .native-news-grid, .native-contact-grid, .native-program-grid--page, .native-alumni-grid { grid-template-columns: 1fr; } }

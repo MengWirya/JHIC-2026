@@ -12,8 +12,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    "www.smktelkom-mlg.sch.id/**",
-    "public/legacy/**",
+    "reference/**",
   ]),
 ]);
 

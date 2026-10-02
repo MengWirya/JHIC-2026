@@ -1,16 +1,23 @@
 "use client";
 
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, Camera, Globe2, Menu, MessageCircle, Video, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const navigation = [
+  { label: "Beranda", href: "/" },
   { label: "Tentang Kami", href: "/tentang-kami" },
-  { label: "Program", href: "/p/profil-jurusan" },
-  { label: "Career Industries", href: "/career-industries" },
-  { label: "Berita", href: "/berita" },
-  { label: "FAQ", href: "/faq" },
+  { label: "Program", href: "/program" },
+  { label: "Alumni", href: "/alumni" },
+  { label: "Hubungi Kami", href: "/kontak" },
+];
+
+const socialLinks = [
+  { label: "Facebook", href: "https://www.facebook.com/smktelkommalang", icon: Globe2 },
+  { label: "Instagram", href: "https://www.instagram.com/smktelkommalang", icon: Camera },
+  { label: "Twitter", href: "https://twitter.com/smktelkommlg", icon: MessageCircle },
+  { label: "YouTube", href: "https://www.youtube.com/@smktelkommalang", icon: Video },
 ];
 
 export function SiteHeader() {
@@ -47,9 +54,13 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <a className="site-header__cta" href="https://ppdb.telkomschools.sch.id/signup?lemdik=51" target="_blank" rel="noreferrer">
-            PPDB <ArrowUpRight size={15} />
-          </a>
+          <div className="site-header__socials" aria-label="Media sosial">
+            {socialLinks.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} title={label}><Icon size={15} /></a>)}
+          </div>
+          <div className="site-header__ctas">
+            <a className="site-header__cta" href="https://ppdb.telkomschools.sch.id/signup?lemdik=51" target="_blank" rel="noreferrer">PPDB <ArrowUpRight size={15} /></a>
+            <a className="site-header__cta site-header__cta--secondary" href="https://mikrotikacademy.telkomschools.sch.id/" target="_blank" rel="noreferrer">MikroTik Academy <ArrowUpRight size={15} /></a>
+          </div>
         </nav>
       </div>
     </header>

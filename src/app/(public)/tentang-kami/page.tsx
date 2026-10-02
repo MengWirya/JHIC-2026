@@ -29,10 +29,10 @@ export default function AboutPage() {
         </section>
 
         <section className="native-section native-about__principles">
-          <div className="native-shell"><div className="native-section-heading"><div><p className="native-eyebrow native-eyebrow--dark">Cara kami bertumbuh</p><h2>Tiga hal yang kami jaga.</h2></div><Link className="native-text-link native-text-link--dark" href="/p/visi-dan-misi">Lihat visi dan misi <ArrowRight size={16} /></Link></div><div className="native-about__principle-grid">{principles.map(({ icon: Icon, title, text }) => <article key={title}><Icon size={25} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
+          <div className="native-shell"><div className="native-section-heading"><div><p className="native-eyebrow native-eyebrow--dark">Cara kami bertumbuh</p><h2>Tiga hal yang kami jaga.</h2></div><Link className="native-text-link native-text-link--dark" href="/tentang-kami">Lihat visi dan misi <ArrowRight size={16} /></Link></div><div className="native-about__principle-grid">{principles.map(({ icon: Icon, title, text }) => <article key={title}><Icon size={25} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
         </section>
 
-        <section className="native-about__cta"><div className="native-shell"><p className="native-eyebrow">Temukan langkahmu</p><h2>Teknologi terus bergerak. Kami siap bergerak bersamanya.</h2><Link className="native-button native-button--light" href="/p/profil-jurusan">Lihat program keahlian <ArrowRight size={17} /></Link></div></section>
+        <section className="native-about__cta"><div className="native-shell"><p className="native-eyebrow">Temukan langkahmu</p><h2>Teknologi terus bergerak. Kami siap bergerak bersamanya.</h2><Link className="native-button native-button--light" href="/program">Lihat program keahlian <ArrowRight size={17} /></Link></div></section>
       </main>
     </div>
   );
