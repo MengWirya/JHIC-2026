@@ -29,19 +29,19 @@ model Admin {
 // Ini yang membuat 1 form admin bisa dipakai ulang untuk beberapa fitur sekaligus.
 
 model Konten {
-  id          Int      @id @default(autoincrement())
-  tipe        TipeKonten
-  slug        String   @unique
-  judul       String
-  deskripsi   String   @db.Text
-  gambarUrl   String?
-  tanggal     DateTime @default(now())
-  status      StatusKonten @default(DRAFT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int          @id @default(autoincrement())
+  tipe      TipeKonten
+  slug      String       @unique
+  judul     String
+  deskripsi String       @db.Text
+  gambarUrl String?
+  tanggal   DateTime     @default(now())
+  status    StatusKonten @default(DRAFT)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
-  admin    Admin @relation(fields: [adminId], references: [id])
-  adminId  Int
+  admin   Admin @relation(fields: [adminId], references: [id])
+  adminId Int
 
   @@index([tipe, status])
 }
@@ -61,39 +61,39 @@ enum StatusKonten {
 // ─── CAREER INDUSTRIES (BKK) ────────────────────────────────────
 
 model Perusahaan {
-  id        Int     @id @default(autoincrement())
-  nama      String    @unique
+  id        Int      @id @default(autoincrement())
+  nama      String   @unique
   logoUrl   String?
-  overview  String  @db.Text
+  overview  String   @db.Text
   kontak    String?
   website   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  admin    Admin @relation(fields: [adminId], references: [id])
-  adminId  Int
+  admin   Admin @relation(fields: [adminId], references: [id])
+  adminId Int
 
-  tags       PerusahaanTag[]
-  testimoni  Testimoni[]
-  lowongan   Lowongan[]
+  tags      PerusahaanTag[]
+  testimoni Testimoni[]
+  lowongan  Lowongan[]
 }
 
 model Lowongan {
-  id             Int           @id @default(autoincrement())
-  slug           String        @unique
+  id             Int            @id @default(autoincrement())
+  slug           String         @unique
   judulPosisi    String
   lokasi         String
   tipe           TipeLowongan
-  deskripsi      String        @db.Text
-  syaratKeahlian String        @db.Text
+  deskripsi      String         @db.Text
+  syaratKeahlian String         @db.Text
   status         StatusLowongan @default(PUBLISHED)
-  perusahaan     Perusahaan    @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
+  perusahaan     Perusahaan     @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
   perusahaanId   Int
-  admin          Admin         @relation(fields: [adminId], references: [id])
+  admin          Admin          @relation(fields: [adminId], references: [id])
   adminId        Int
   lamaran        Lamaran[]
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@index([tipe, status])
   @@index([perusahaanId])
@@ -112,16 +112,16 @@ enum StatusLowongan {
 }
 
 model Lamaran {
-  id            Int            @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   namaLengkap   String
   kelasAlumni   String
   email         String
   portfolioUrl  String
-  pesanTambahan String?        @db.Text
-  status        StatusLamaran  @default(BARU)
-  lowongan      Lowongan       @relation(fields: [lowonganId], references: [id], onDelete: Cascade)
+  pesanTambahan String?       @db.Text
+  status        StatusLamaran @default(BARU)
+  lowongan      Lowongan      @relation(fields: [lowonganId], references: [id], onDelete: Cascade)
   lowonganId    Int
-  createdAt     DateTime       @default(now())
+  createdAt     DateTime      @default(now())
 
   @@index([lowonganId, status])
 }
@@ -151,11 +151,11 @@ model PerusahaanTag {
 }
 
 model Testimoni {
-  id           Int    @id @default(autoincrement())
-  namaPemberi  String
-  peran        String // "Alumni" | "Guru"
-  fotoUrl      String?
-  kutipan      String @db.Text
+  id          Int     @id @default(autoincrement())
+  namaPemberi String
+  peran       String // "Alumni" | "Guru"
+  fotoUrl     String?
+  kutipan     String  @db.Text
 
   perusahaan   Perusahaan @relation(fields: [perusahaanId], references: [id], onDelete: Cascade)
   perusahaanId Int
@@ -164,10 +164,10 @@ model Testimoni {
 // ─── CHATBOT KNOWLEDGE BASE (MokletBot) ─────────────────────────
 
 model Faq {
-  id         Int    @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   kategori   String // "Tentang Moklet" | "PPDB" | "Kurikulum" | dst
-  pertanyaan String @db.Text
-  jawaban    String @db.Text
+  pertanyaan String   @db.Text
+  jawaban    String   @db.Text
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -183,18 +183,26 @@ model ChatLog {
 // ─── PESAN MASUK (gabungan Kotak Pertanyaan + Layanan Orang Tua) ─
 
 model PesanMasuk {
-  id        Int      @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   nama      String
   email     String?
   telp      String?
   subjek    String
-  pesan     String   @db.Text
+  pesan     String      @db.Text
   status    StatusPesan @default(BARU)
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
 }
 
 enum StatusPesan {
   BARU
   DIPROSES
   SELESAI
+}
+
+model Siswa {
+  id         Int      @id @default(autoincrement())
+  nisYayasan String   @unique
+  nama       String
+  jurusan    String?
+  createdAt  DateTime @default(now())
 }

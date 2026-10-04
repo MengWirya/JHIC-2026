@@ -17,6 +17,13 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
+// ─── DATA SEED SISWA (UNTUK VERIFIKASI NIS / NISN) ─────────────
+const siswaSeed = [
+  { nisYayasan: "5432101", nama: "Prabu Panedya", jurusan: "Rekayasa Perangkat Lunak (RPL)" },
+  { nisYayasan: "5432102", nama: "Dimas Pratama", jurusan: "Teknik Komputer dan Jaringan (TKJ)" },
+  { nisYayasan: "5432103", nama: "Siswa Moklet 1", jurusan: "Pengembangan Gim (PG)" },
+];
+
 const faqSeed = [
   ["Career Industries", "Di mana saya bisa melihat lowongan kerja/PKL?", "Anda dapat mengunjungi portal Career Industries di menu utama website ini untuk melamar posisi secara langsung."],
   ["PPDB", "Bagaimana cara mendaftar PPDB?", "Pendaftaran dilakukan secara terpusat melalui portal resmi Telkom Schools di ppdb.telkomschools.sch.id."],
@@ -50,6 +57,22 @@ async function main() {
       update: { nama: "Super Admin Moklet", role: "SUPER_ADMIN", passwordHash },
       create: { nama: "Super Admin Moklet", email: "admin@smktelkom-mlg.sch.id", role: "SUPER_ADMIN", passwordHash },
     });
+
+    // ─── SEED DATA SISWA FOR VERIFICATION ─────────────
+    for (const siswa of siswaSeed) {
+      await prisma.siswa.upsert({
+        where: { nisYayasan: siswa.nisYayasan },
+        update: {
+          nama: siswa.nama,
+          jurusan: siswa.jurusan
+        },
+        create: {
+          nisYayasan: siswa.nisYayasan,
+          nama: siswa.nama,
+          jurusan: siswa.jurusan
+        },
+      });
+    }
 
     for (const [kategori, pertanyaan, jawaban] of faqSeed) {
       const existing = await prisma.faq.findFirst({ where: { pertanyaan } });
@@ -87,7 +110,7 @@ async function main() {
     const sampleApplication = await prisma.lamaran.findFirst({ where: { email: "siswa.demo@moklet.sch.id", lowonganId: sampleJob.id } });
     if (!sampleApplication) await prisma.lamaran.create({ data: { namaLengkap: "Dimas Pratama", kelasAlumni: "XII RPL 1", email: "siswa.demo@moklet.sch.id", portfolioUrl: "https://github.com/dimas-demo", pesanTambahan: "Tertarik belajar membangun produk digital bersama tim.", status: StatusLamaran.BARU, lowonganId: sampleJob.id } });
 
-    console.log(`Seed selesai. Admin: ${admin.email}. Password seed: ${process.env.ADMIN_PASSWORD ? "dari ADMIN_PASSWORD" : "MokletLocal2026!"}.`);
+    console.log(`Seed selesai. Data Siswa, Admin: ${admin.email} berhasil di-seed.`);
   } finally {
     await prisma.$disconnect();
   }

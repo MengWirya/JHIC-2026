@@ -13,6 +13,8 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
+    // Tambahkan properti seed di bawah ini:
+    seed: "tsx prisma/seed.ts", // Gunakan "bun ./prisma/seed.ts" jika Anda menggunakan runtime Bun
   },
   datasource: {
     url: databaseUrl,

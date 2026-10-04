@@ -2,6 +2,7 @@
 
 import { Bot, MessageCircle, Send, X } from "lucide-react";
 import { FormEvent, useState } from "react";
+import { usePathname } from 'next/navigation';
 
 const quickReplies = ["Info PPDB 2026", "Lowongan BKK", "Daftar Jurusan"];
 
@@ -15,6 +16,7 @@ export function MokletBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -22,6 +24,10 @@ export function MokletBot() {
       text: "Halo, saya MokletBot. Ada yang ingin kamu ketahui tentang SMK Telkom Malang?",
     },
   ]);
+
+  if(pathname.startsWith("/admin")){
+    return null;
+  }
 
   async function askBot(text: string) {
     const trimmedQuestion = text.trim();
