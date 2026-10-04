@@ -1,6 +1,6 @@
 # Moklet Hub 2.0 — Setup Project
 
-Stack: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Prisma 7 + MySQL/MariaDB + Auth.js + Anthropic/Gemini API
+Stack: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + Prisma 7 + MySQL/MariaDB + Auth.js + Anthropic/Gemini/NVIDIA API
 
 ## 1. Setup Awal
 
@@ -13,8 +13,9 @@ Isi `.env` dengan:
 - `DATABASE_URL` — koneksi MySQL lokal kalian (bisa pakai XAMPP/Docker untuk development)
 - `AUTH_SECRET` — generate lewat `openssl rand -base64 32`
 - `ADMIN_PASSWORD` — password admin development
-- `AI_PROVIDER` — `anthropic` atau `gemini`
-- `ANTHROPIC_API_KEY` atau `GEMINI_API_KEY` — sesuai provider yang dipilih
+- `AI_PROVIDER` — `anthropic`, `gemini`, atau `nvidia`
+- `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, atau `NVIDIA_API_KEY` — sesuai provider yang dipilih
+- `NVIDIA_MODEL` *(opsional)* — default: `nvidia/nemotron-3-super-120b-a12b`
 
 ## 2. Setup Database
 
