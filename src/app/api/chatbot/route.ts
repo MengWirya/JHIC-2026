@@ -30,8 +30,39 @@ async function generateAnswer(question: string, systemPrompt: string) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ contents: [{ parts: [{ text: `${systemPrompt}\n\nPertanyaan pengguna: ${question}` }] }] }),
     });
+    if (!response.ok) {
+      throw new Error(`Gemini request failed: ${response.status}`);
+    }
     const data = await response.json();
     return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "Maaf, MokletBot belum bisa menjawab saat ini.";
+  }
+
+  if (provider === "nvidia") {
+    const key = process.env.NVIDIA_API_KEY;
+    if (!key) throw new Error("NVIDIA_API_KEY is not configured.");
+
+    const response = await fetch("https://integrate.api.nvidia.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + key,
+      },
+      body: JSON.stringify({
+        model: process.env.NVIDIA_MODEL ?? "nvidia/nemotron-3-super-120b-a12b",
+        max_tokens: 500,
+        temperature: 0.3,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: question },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`NVIDIA request failed: ${response.status}`);
+    }
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content ?? "Maaf, MokletBot belum bisa menjawab saat ini.";
   }
 
   const key = process.env.ANTHROPIC_API_KEY;
@@ -41,6 +72,9 @@ async function generateAnswer(question: string, systemPrompt: string) {
     headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 500, system: systemPrompt, messages: [{ role: "user", content: question }] }),
   });
+  if (!response.ok) {
+    throw new Error(`Anthropic request failed: ${response.status}`);
+  }
   const data = await response.json();
   return data?.content?.find((c: { type: string }) => c.type === "text")?.text ?? "Maaf, MokletBot belum bisa menjawab saat ini.";
 }
