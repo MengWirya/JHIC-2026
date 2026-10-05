@@ -117,6 +117,7 @@ model Lamaran {
   kelasAlumni   String
   email         String
   portfolioUrl  String
+  cvUrl         String? // 🟢 Tambahkan kolom ini untuk menyimpan link/path file CV
   pesanTambahan String?       @db.Text
   status        StatusLamaran @default(BARU)
   lowongan      Lowongan      @relation(fields: [lowonganId], references: [id], onDelete: Cascade)
